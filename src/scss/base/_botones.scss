@@ -14,3 +14,15 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.boton-rojo-block{
+    @include boton($rojo, block);
+}
+
+.boton-azul-block{
+    @include boton($azul, block);
+}
+
+.boton-chico{
+    padding: 0.08rem;
+}
