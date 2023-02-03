@@ -16,6 +16,34 @@ error_reporting(E_ALL);
     //Conectar a la BD
     $consulta = mysqli_query($db, $query);
 
+    if($_SERVER['REQUEST_METHOD']=== 'POST'){
+        $id = $_POST['id'];
+        $id = filter_var($id, FILTER_VALIDATE_INT);
+        
+        if($id){
+            //Elimina la imagen
+            $query = "SELECT imagen FROM propiedad WHERE id=${id}";
+            $resultado = mysqli_query($db, $query);
+            $propiedad = mysqli_fetch_assoc($resultado);
+
+            unlink('../imagenes/' . $propiedad['imagen']);
+
+            //Elimina la propiedad
+            $query= "DELETE FROM propiedad WHERE id=${id}";
+            $eliminar = mysqli_query($db, $query);
+
+            if($eliminar){
+                echo "<script> alert('Guardado exitosamente');
+                location.href = 'crear.php';
+                </script>";
+            }else{
+                echo "<script> alert('Error al guardar');
+                location.href = 'crear.php';
+                </script>";
+            }
+        }
+    }
+
     //incluye el header
     require '../includes/funciones.php';
     incluirTemplate('header');
@@ -32,14 +60,10 @@ error_reporting(E_ALL);
     <table class="empleados">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Titulo</th>
                 <th>Precio</th>
                 <th>Imagen</th>
-                <th>Descripción</th>
-                <th>Habitaciones</th>
-                <th>Baños</th>
-                <th>Estacionamiento</th>
-                <th>Vendedor</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -47,17 +71,16 @@ error_reporting(E_ALL);
 
         <?php while($row = mysqli_fetch_assoc($consulta)):  ?>
             <tr>
+                <td><?php echo $row['id'];  ?></td>
                 <td><?php echo $row['titulo'];  ?></td>
                 <td><?php echo $row['precio'];  ?> </td>
-                <td><?php echo $row['imagen'];  ?></td>
-                <td><?php echo $row['descripcion'];  ?></td>
-                <td><?php echo $row['habitaciones'];  ?></td>
-                <td><?php echo $row['wc'];  ?></td>
-                <td><?php echo $row['estacionamiento'];  ?></td>
-                <td><?php echo $row['vendedorId'];  ?></td>
+                <td> <img src="../imagenes/<?php echo $row['imagen'];  ?>" class="imagen-tabla"></td>
                 <td>
-                    <a href="#" class="boton-azul-block boton-chico">Actualizar</a>
-                    <a href="#" class="boton-rojo-block boton-chico">Eliminar</a>
+                <a href="propiedades/actualizar.php?id=<?php echo $row['id']; ?>" class="boton-azul-block boton-chico">Actualizar</a>
+                    <form method="POST" class="w-100">
+                        <input type="hidden" name="id" value=<?php echo $row['id'];?> >
+                    <input type="submit" class="boton-rojo-block boton-chico" value="Eliminar">
+                    </form>
                 </td>
             </tr>
             <?php endwhile; ?>
@@ -65,7 +88,9 @@ error_reporting(E_ALL);
     </table>
     
     <?php
-    //Cerrar la conexión a la BD
+
+    //Cerrar conexión a la BD
+    mysqli_close($db);
 
     incluirTemplate('footer');
     ?>
