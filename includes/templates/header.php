@@ -1,3 +1,13 @@
+<?php
+    if(!isset($_SESSION)){
+        session_start();
+    }
+
+    $aut=$_SESSION['login'] ?? false;
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +19,7 @@
 </head>
 <body>
 
-    <header class="header <?php echo $inicio ? 'inicio' : '';  ?>">
+    <header class="header ">
         <div class="contenedor contenido-header">
             <div class="barra">
                <a href="/index.php">
@@ -27,6 +37,9 @@
                     <a href="/anuncios.php">Anuncios</a>
                     <a href="/blog.php">Blog</a>
                     <a href="/contacto.php">Contacto</a>
+                    <?php if($aut):  ?>
+                        <a href="cerrar-sesion.php">Cerrar Sesión</a>
+                    <?php endif;  ?>
                    </nav>
                </div>
             </div>

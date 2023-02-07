@@ -1,7 +1,14 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+    require '../../includes/funciones.php';
+    //Verificar el inicio de sesión
+    $aut=estaAutenticado();
+    if(!$aut){
+        header('Location: /index.php');
+    }
+
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 ?>
 
 <?php
@@ -106,7 +113,7 @@ error_reporting(E_ALL);
 }
     }
 
-    require '../../includes/funciones.php';
+    //Incluir el header
     incluirTemplate('header');
 ?>
 
