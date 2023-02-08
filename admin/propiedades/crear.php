@@ -1,10 +1,10 @@
 <?php
-    require '../../includes/funciones.php';
+    require '../../includes/app.php';
+    use App\Propiedad;
+
+
     //Verificar el inicio de sesión
-    $aut=estaAutenticado();
-    if(!$aut){
-        header('Location: /index.php');
-    }
+    estaAutenticado();
 
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -12,8 +12,6 @@
 ?>
 
 <?php
-    //Conectar la base de daatos
-    require '../../includes/config/database.php';
     $db = conectarDB();
 
     //Consultar para obtener los vendedores
@@ -33,13 +31,8 @@
 
     if($_SERVER['REQUEST_METHOD']=== 'POST'){
 
-        // echo "<pre>";
-        // var_dump($_POST);
-        // echo "</pre>";
-
-        // echo "<pre>";
-        // var_dump($_FILES);
-        // echo "</pre>";
+    $propiedad = new Propiedad($_POST);
+    $propiedad->guardar();
 
     $titulo = mysqli_real_escape_string($db, $_POST['titulo']) ;
     $precio = mysqli_real_escape_string($db, $_POST['precio']) ;
@@ -91,25 +84,11 @@
             mkdir($carpetaImagenes);
         }
 
-            //Insertar en la base de datos
-    $insertar = "INSERT INTO propiedad(titulo, precio, imagen, descripcion,habitaciones, wc, estacionamiento, vendedorId)
-                VALUES('$titulo','$precio', '$nombreImagen','$descripcion',  '$habitaciones','$wc', '$estacionamiento', '$vendedorId')";
-
-    //echo $insertar;
-
-    try{
-        $resultado=mysqli_query($db, $insertar);
-
+        $resultado=mysqli_query($db, $query);
+        
         if($resultado){
-            echo "<script> alert('Guardado exitosamente');
-            location.href = 'crear.php';
-            </script>";
+            header('Location: /admin/crear.php');
         }
-    }catch(\Throwable $th){
-        echo "<script> alert('Error al guardar');
-            location.href = 'crear.php';
-            </script>";
-    }
 }
     }
 

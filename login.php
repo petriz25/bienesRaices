@@ -1,6 +1,6 @@
 <?php
     //Importar la conexión
-    require 'includes/config/database.php';
+    require 'includes/app.php';
     $db = conectarDB();
 
     //Escribir el query
@@ -54,7 +54,6 @@
     }
 
     //Incluye el header
-    require 'includes/funciones.php';
     incluirTemplate('header');
 ?>
 
