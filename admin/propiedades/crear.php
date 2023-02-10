@@ -1,6 +1,7 @@
 <?php
     require '../../includes/app.php';
     use App\Propiedad;
+    use App\Vendedor;
     use Intervention\Image\ImageManagerStatic as Image;
 
 
@@ -10,36 +11,25 @@
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
-?>
 
-<?php
-    $db = conectarDB();
+    $propiedad=new Propiedad;
 
-    //Consultar para obtener los vendedores
-    $consultaVendedores="SELECT * FROM vendedores";
-    $resultadoVendedores=mysqli_query($db, $consultaVendedores);
+    //Consulta para obtener todos los vendedores
+    $vendedores = Vendedor::all();
 
     //Arreglo con mensaje de errores
     $errores= Propiedad::getErrores();
 
-    $titulo = '';
-    $precio ='';
-    $descripcion ='';
-    $habitaciones ='';
-    $wc ='';
-    $estacionamiento ='';
-    $vendedorId ='';
-
     if($_SERVER['REQUEST_METHOD']=== 'POST'){
 
-    $propiedad = new Propiedad($_POST);
+    $propiedad = new Propiedad($_POST['propiedad']);
 
     //CREANDO NOMBRE UNICO PARA CADA IMAGEN
     $nombreImagen= md5(uniqid( rand(), true) ) . ".jpg";
 
     //Realia un resize a la imagen usando intervention
-    if($_FILES['imagen']['tmp_name']){
-        $image=Image::make($_FILES['imagen']['tmp_name'])->fit(800,600);
+    if($_FILES['propiedad']['tmp_name']['imagen']){
+        $image=Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800,600);
         $propiedad->setImagen($nombreImagen);
     }
 
@@ -54,12 +44,7 @@
         $image->save(CARPETA_IMAGENES . $nombreImagen);
 
         //Guardar en la base de datos
-        $resultado = $propiedad->guardar();
-        
-        //Mensaje de exito, reedirecciona a la pestaña de crear
-        if($resultado){
-            header('Location: /admin/propiedades/crear.php');
-        }
+        $propiedad->guardar();
 }
     }
 
@@ -81,7 +66,7 @@
         <?php endforeach;  ?>
 
         <form method="POST" action="/admin/propiedades/crear.php" class="formulario" enctype="multipart/form-data">
-            
+            <?php include '../../includes/templates/formulario_propiedades.php'; ?>
 
             <input type="submit" value="Crear Propiedad" class="boton-amarillo">
         </form>

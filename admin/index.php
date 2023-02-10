@@ -1,9 +1,11 @@
 <?php
     require '../includes/app.php';
     use App\Propiedad;
+    use App\Vendedor;
 
     //Metodo para obtener todas las propiedades
     $propiedades = Propiedad::all();
+    $vendedores = Vendedor::all();
 
     //Verificar el inicio de sesión
     estaAutenticado();
@@ -20,6 +22,11 @@
         $id = filter_var($id, FILTER_VALIDATE_INT);
         
         if($id){
+            //Detectar el ID
+            $propiedad=Propiedad::find($id);
+            //Elimina la propiedad
+            $propiedad->eliminar();
+
             //Elimina la imagen
             $query = "SELECT imagen FROM propiedad WHERE id=${id}";
             $resultado = mysqli_query($db, $query);
@@ -27,31 +34,18 @@
 
             unlink('../imagenes/' . $propiedad['imagen']);
 
-            //Elimina la propiedad
-            $query= "DELETE FROM propiedad WHERE id=${id}";
-            $eliminar = mysqli_query($db, $query);
-
-            if($eliminar){
-                echo "<script> alert('Guardado exitosamente');
-                location.href = 'crear.php';
-                </script>";
-            }else{
-                echo "<script> alert('Error al guardar');
-                location.href = 'crear.php';
-                </script>";
-            }
         }
     }
 
     //incluye el header
-    incluirTemplate('header');
+    incluirTemplate('header'); 
 ?>
 
     <main class="contenedor seccion">
         <h1>Propiedades </h1>
 
         <a href="/admin/propiedades/crear.php" class="boton boton-verde">
-            Volver al creador
+            Nueva propiedad
         </a>
     </main>
 
